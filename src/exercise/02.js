@@ -8,10 +8,12 @@ function Greeting({initialName = ''}) {
     console.log('set')
     return window.localStorage.getItem('name') || initialName
   })
+  const [count, setCount] = React.useState(0)
 
   React.useEffect(() => {
+    console.log('name effect triggered')
     window.localStorage.setItem('name', name)
-  })
+  },[name])
 
   function handleChange(event) {
     setName(event.target.value)
@@ -23,6 +25,8 @@ function Greeting({initialName = ''}) {
         <input value={name} onChange={handleChange} id="name" />
       </form>
       {name ? <strong>Hello {name}</strong> : 'Please type your name'}
+      <br/>
+      <button onClick={()=> setCount(count +1)}>{count}</button>
     </div>
   )
 }
