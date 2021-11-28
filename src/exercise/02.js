@@ -3,32 +3,37 @@
 
 import * as React from 'react'
 
-const useLocalStorageState = (name) => {
+const useLocalStorageState = (whatevs) => {
   React.useEffect(() => {
-    console.log('name effect triggered')
-    window.localStorage.setItem('name', name)
-  },[name])
+    console.log('whatevs effect triggered')
+      window.localStorage.setItem('whatevs', JSON.stringify(whatevs))   
+  },[whatevs])
 }
 
-function Greeting({initialName = ''}) {
-  const [name, setName] = React.useState(() => {
-    console.log('set')
-    return window.localStorage.getItem('name') || initialName
+function Greeting({initialThing = {name: 'jeff'}}) {
+  const [whatevs, setWhatevs] = React.useState(() => {
+    console.log('the initial state of "whatevs" has been set')
+    let whatevs = window.localStorage.getItem('whatevs')
+    console.log("the type of what is stored in localStorage is", typeof whatevs)
+    whatevs = JSON.parse(whatevs) 
+    return whatevs || initialThing
   })
-  useLocalStorageState();
+  useLocalStorageState(whatevs);
   const [count, setCount] = React.useState(0)
 
 
   function handleChange(event) {
-    setName(event.target.value)
+    
+    console.log('value is now', event.target.value)
+    setWhatevs({name: event.target.value})
   }
   return (
     <div>
       <form>
         <label htmlFor="name">Name: </label>
-        <input value={name} onChange={handleChange} id="name" />
+        <input value={whatevs?.name} onChange={handleChange} id="name" />
       </form>
-      {name ? <strong>Hello {name}</strong> : 'Please type your name'}
+      {whatevs ? <strong>Hello {whatevs?.name}</strong> : 'Please type your name'}
       <br/>
       <button onClick={()=> setCount(count +1)}>{count}</button>
     </div>
