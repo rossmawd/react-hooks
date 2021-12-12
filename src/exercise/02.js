@@ -3,39 +3,37 @@
 
 import * as React from 'react'
 
-const useLocalStorageState = (whatevs) => {
+const useLocalStorageState = (key, defaultValue = '') => {
+  const [state, setState] = React.useState(() => {
+    let currentState = window.localStorage.getItem(key) || defaultValue
+    console.log('GETTING the state ', currentState, ' from localStorage')
+    return currentState
+  })
+
   React.useEffect(() => {
-    console.log('whatevs effect triggered')
-      window.localStorage.setItem('whatevs', JSON.stringify(whatevs))   
-  },[whatevs])
+    console.log('localStorage effect triggered: saving into localStorage')
+    window.localStorage.setItem(key, state)
+  }, [key, state])
+
+  return [state, setState]
 }
 
-function Greeting({initialThing = {name: 'jeff'}}) {
-  const [whatevs, setWhatevs] = React.useState(() => {
-    console.log('the initial state of "whatevs" has been set')
-    let whatevs = window.localStorage.getItem('whatevs')
-    console.log("the type of what is stored in localStorage is", typeof whatevs)
-    whatevs = JSON.parse(whatevs) 
-    return whatevs || initialThing
-  })
-  useLocalStorageState(whatevs);
+function Greeting({initialName = ''}) {
+  const [name, setName] = useLocalStorageState('name', initialName)
   const [count, setCount] = React.useState(0)
 
-
   function handleChange(event) {
-    
-    console.log('value is now', event.target.value)
-    setWhatevs({name: event.target.value})
+    setName(event.target.value)
   }
   return (
     <div>
       <form>
         <label htmlFor="name">Name: </label>
-        <input value={whatevs?.name} onChange={handleChange} id="name" />
+        <input value={name} onChange={handleChange} id="name" />
       </form>
-      {whatevs ? <strong>Hello {whatevs?.name}</strong> : 'Please type your name'}
-      <br/>
-      <button onClick={()=> setCount(count +1)}>{count}</button>
+      {name ? <strong>Hello {name}</strong> : 'Please type your name'}
+      <br />
+      <button onClick={() => setCount(count + 1)}>{count}</button>
     </div>
   )
 }
